@@ -1,26 +1,138 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Light theme (default) */
+body {
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+/* Dark theme */
+body.dark-theme {
+  background-color: #0f172a;
+  color: #f1f5f9;
+}
+
+/* Dark mode component overrides */
+body.dark-theme .bg-white {
+  background-color: #1e293b !important;
+}
+
+body.dark-theme .bg-gray-50 {
+  background-color: #0f172a !important;
+}
+
+body.dark-theme .bg-gray-100 {
+  background-color: #1e293b !important;
+}
+
+body.dark-theme .text-gray-900 {
+  color: #f1f5f9 !important;
+}
+
+body.dark-theme .text-gray-800 {
+  color: #e2e8f0 !important;
+}
+
+body.dark-theme .text-gray-700 {
+  color: #cbd5e1 !important;
+}
+
+body.dark-theme .text-gray-600 {
+  color: #94a3b8 !important;
+}
+
+body.dark-theme .text-gray-500 {
+  color: #64748b !important;
+}
+
+body.dark-theme .text-gray-400 {
+  color: #475569 !important;
+}
+
+body.dark-theme .border-gray-200 {
+  border-color: #334155 !important;
+}
+
+body.dark-theme .border-gray-100 {
+  border-color: #1e293b !important;
+}
+
+body.dark-theme .border-gray-300 {
+  border-color: #475569 !important;
+}
+
+body.dark-theme input,
+body.dark-theme select,
+body.dark-theme textarea {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f1f5f9 !important;
+}
+
+body.dark-theme input:focus,
+body.dark-theme select:focus,
+body.dark-theme textarea:focus {
+  background-color: #1e293b !important;
+  border-color: #8b5cf6 !important;
+}
+
+body.dark-theme input::placeholder,
+body.dark-theme textarea::placeholder {
+  color: #64748b !important;
+}
+
+body.dark-theme table thead {
+  background-color: #1e293b !important;
+}
+
+body.dark-theme table tbody tr:hover {
+  background-color: #334155 !important;
+}
+
+/* Gradient backgrounds in dark mode */
+body.dark-theme .from-purple-50 {
+  --tw-gradient-from: #312e81 !important;
+}
+
+body.dark-theme .to-purple-100 {
+  --tw-gradient-to: #4c1d95 !important;
+}
+
+body.dark-theme .from-teal-50 {
+  --tw-gradient-from: #134e4a !important;
+}
+
+body.dark-theme .to-teal-100 {
+  --tw-gradient-to: #115e59 !important;
+}
+
+body.dark-theme .from-blue-50 {
+  --tw-gradient-from: #1e3a8a !important;
+}
+
+body.dark-theme .to-blue-100 {
+  --tw-gradient-to: #1e40af !important;
+}
+
+body.dark-theme .from-gray-50 {
+  --tw-gradient-from: #1e293b !important;
+}
+
+body.dark-theme .to-gray-100 {
+  --tw-gradient-to: #334155 !important;
+}
+
+body.dark-theme .from-red-50 {
+  --tw-gradient-from: #7f1d1d !important;
+}
+
+body.dark-theme .to-red-100 {
+  --tw-gradient-to: #991b1b !important;
 }
