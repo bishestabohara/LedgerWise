@@ -117,7 +117,7 @@ export default function Recurring() {
             className="px-4 py-2 bg-emerald-500 text-white rounded-lg text-sm font-semibold hover:bg-emerald-600 transition-all flex items-center gap-1.5"
           >
             <span className="text-base">+</span>
-            Add Expense
+            Add Recurring Expense
           </button>
           <button
             onClick={handleDeleteSelected}

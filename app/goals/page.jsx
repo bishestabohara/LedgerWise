@@ -112,7 +112,7 @@ export default function Goals() {
           onClick={() => setShowAddForm(true)}
           className="px-5 py-2.5 bg-gray-900 text-white rounded-xl text-sm font-semibold hover:bg-gray-800 shadow-md shadow-gray-900/20 hover:shadow-lg hover:shadow-gray-900/30 transition-all duration-200 hover:-translate-y-0.5"
         >
-          + Add Goal
+          + New Goal
         </button>
       </div>
 

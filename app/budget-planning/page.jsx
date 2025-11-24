@@ -26,14 +26,22 @@ export default function BudgetPlanning() {
       return;
     }
 
+    const total = formData.categories.reduce((sum, cat) => sum + (parseFloat(cat.percentage) || 0), 0);
+    if (Math.abs(total - 100) > 0.1) {
+      alert('Category percentages must add up to 100%');
+      return;
+    }
+
     try {
       await createBudget({
         limit: parseFloat(formData.limit),
         categories: formData.categories,
         month: new Date().toISOString()
       });
+      // Reset form and close modal
       setFormData({ limit: '', categories: [] });
       setShowCreateForm(false);
+      alert('Budget created successfully!');
     } catch (error) {
       console.error('Error creating budget:', error);
       alert('Failed to create budget. Please try again.');
