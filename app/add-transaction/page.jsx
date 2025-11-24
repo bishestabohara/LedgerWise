@@ -50,33 +50,33 @@ export default function AddTransaction() {
 
   return (
     <div className="max-w-2xl mx-auto w-full">
-      <div className="bg-white rounded-2xl p-10 shadow-sm border border-gray-200">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2 tracking-tight">Add Transaction</h1>
-        <div className="pb-6 mb-8 border-b border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-900 mb-1.5 tracking-tight">New Transaction</h2>
-          <p className="text-sm text-gray-500">Enter the details of your transaction below</p>
+      <div className="bg-white rounded-2xl p-5 sm:p-8 md:p-10 shadow-sm border border-gray-200">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 tracking-tight">Add Transaction</h1>
+        <div className="pb-4 sm:pb-6 mb-6 sm:mb-8 border-b border-gray-100">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-1.5 tracking-tight">New Transaction</h2>
+          <p className="text-xs sm:text-sm text-gray-500">Enter the details of your transaction below</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-          <div className="flex flex-col gap-2.5">
-            <label htmlFor="type" className="text-sm font-semibold text-gray-700 tracking-tight">Type</label>
-            <div className="flex items-center gap-3">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5 sm:gap-6">
+          <div className="flex flex-col gap-2">
+            <label htmlFor="type" className="text-xs sm:text-sm font-semibold text-gray-700 tracking-tight">Type</label>
+            <div className="flex items-center gap-2 sm:gap-3">
               <select
                 id="type"
                 name="type"
                 value={formData.type}
                 onChange={handleChange}
-                className="flex-1 px-4 py-3.5 border border-gray-300 rounded-xl text-[15px] bg-white text-gray-900 hover:border-gray-400 focus:border-purple-600 focus:ring-2 focus:ring-purple-600/10 outline-none transition-all"
+                className="flex-1 px-3 sm:px-4 py-3 sm:py-3.5 border border-gray-300 rounded-xl text-sm sm:text-[15px] bg-white text-gray-900 hover:border-gray-400 focus:border-purple-600 focus:ring-2 focus:ring-purple-600/10 outline-none transition-all"
               >
                 <option value="expense">Expense</option>
                 <option value="income">Income</option>
               </select>
-              <span className="bg-gray-100 text-gray-600 px-3.5 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wide">Preview</span>
+              <span className="bg-gray-100 text-gray-600 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-lg text-[10px] sm:text-[11px] font-bold uppercase tracking-wide whitespace-nowrap">Preview</span>
             </div>
           </div>
 
-          <div className="flex flex-col gap-2.5">
-            <label htmlFor="description" className="text-sm font-semibold text-gray-700 tracking-tight">Description</label>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="description" className="text-xs sm:text-sm font-semibold text-gray-700 tracking-tight">Description</label>
             <input
               type="text"
               id="description"
@@ -84,13 +84,13 @@ export default function AddTransaction() {
               value={formData.description}
               onChange={handleChange}
               placeholder="e.g., Weekly grocery shopping"
-              className="px-4 py-3.5 border border-gray-300 rounded-xl text-[15px] bg-white text-gray-900 placeholder-gray-400 hover:border-gray-400 focus:border-purple-600 focus:ring-2 focus:ring-purple-600/10 outline-none transition-all"
+              className="px-3 sm:px-4 py-3 sm:py-3.5 border border-gray-300 rounded-xl text-sm sm:text-[15px] bg-white text-gray-900 placeholder-gray-400 hover:border-gray-400 focus:border-purple-600 focus:ring-2 focus:ring-purple-600/10 outline-none transition-all"
               required
             />
           </div>
 
-          <div className="flex flex-col gap-2.5">
-            <label htmlFor="amount" className="text-sm font-semibold text-gray-700 tracking-tight">Amount</label>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="amount" className="text-xs sm:text-sm font-semibold text-gray-700 tracking-tight">Amount</label>
             <div className="relative">
               <input
                 type="number"
@@ -101,23 +101,23 @@ export default function AddTransaction() {
                 placeholder="e.g., 50.00"
                 step="0.01"
                 min="0"
-                className="w-full px-4 py-3.5 pr-12 border border-gray-300 rounded-xl text-[15px] bg-white text-gray-900 placeholder-gray-400 hover:border-gray-400 focus:border-purple-600 focus:ring-2 focus:ring-purple-600/10 outline-none transition-all"
+                className="w-full px-3 sm:px-4 py-3 sm:py-3.5 pr-10 sm:pr-12 border border-gray-300 rounded-xl text-sm sm:text-[15px] bg-white text-gray-900 placeholder-gray-400 hover:border-gray-400 focus:border-purple-600 focus:ring-2 focus:ring-purple-600/10 outline-none transition-all"
                 required
               />
-              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 font-semibold">
+              <span className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-gray-600 font-semibold text-sm">
                 {settings.currency === 'USD' ? '$' : settings.currency}
               </span>
             </div>
           </div>
 
-          <div className="flex flex-col gap-2.5">
-            <label htmlFor="category" className="text-sm font-semibold text-gray-700 tracking-tight">Category</label>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="category" className="text-xs sm:text-sm font-semibold text-gray-700 tracking-tight">Category</label>
             <select
               id="category"
               name="category"
               value={formData.category}
               onChange={handleChange}
-              className="px-4 py-3.5 border border-gray-300 rounded-xl text-[15px] bg-white text-gray-900 hover:border-gray-400 focus:border-purple-600 focus:ring-2 focus:ring-purple-600/10 outline-none transition-all"
+              className="px-3 sm:px-4 py-3 sm:py-3.5 border border-gray-300 rounded-xl text-sm sm:text-[15px] bg-white text-gray-900 hover:border-gray-400 focus:border-purple-600 focus:ring-2 focus:ring-purple-600/10 outline-none transition-all"
               required
             >
               <option value="">Select a category</option>
@@ -127,7 +127,7 @@ export default function AddTransaction() {
 
           <button
             type="submit"
-            className="mt-6 px-8 py-4 bg-gray-900 text-white rounded-xl text-[15px] font-bold hover:bg-gray-800 shadow-md shadow-gray-900/20 hover:shadow-lg hover:shadow-gray-900/30 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 tracking-tight"
+            className="mt-4 sm:mt-6 px-6 sm:px-8 py-3.5 sm:py-4 bg-gray-900 text-white rounded-xl text-sm sm:text-[15px] font-bold hover:bg-gray-800 shadow-md shadow-gray-900/20 hover:shadow-lg hover:shadow-gray-900/30 transition-all duration-200 active:translate-y-0 tracking-tight"
           >
             + Add Transaction
           </button>

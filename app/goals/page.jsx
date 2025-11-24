@@ -103,14 +103,14 @@ export default function Goals() {
   return (
     <div className="w-full">
       {/* Header */}
-      <div className="flex justify-between items-start mb-8">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6 sm:mb-8">
         <div>
-          <h1 className="text-[30px] font-bold text-gray-900 mb-1 tracking-tight leading-tight">Goals</h1>
-          <p className="text-sm text-gray-500 font-normal">Set and track your financial goals</p>
+          <h1 className="text-2xl sm:text-[30px] font-bold text-gray-900 mb-1 tracking-tight leading-tight">Goals</h1>
+          <p className="text-xs sm:text-sm text-gray-500 font-normal">Set and track your financial goals</p>
         </div>
         <button
           onClick={() => setShowAddForm(true)}
-          className="px-5 py-2.5 bg-gray-900 text-white rounded-xl text-sm font-semibold hover:bg-gray-800 shadow-md shadow-gray-900/20 hover:shadow-lg hover:shadow-gray-900/30 transition-all duration-200 hover:-translate-y-0.5"
+          className="w-full sm:w-auto px-4 sm:px-5 py-2.5 bg-gray-900 text-white rounded-xl text-xs sm:text-sm font-semibold hover:bg-gray-800 shadow-md shadow-gray-900/20 hover:shadow-lg hover:shadow-gray-900/30 transition-all duration-200"
         >
           + New Goal
         </button>
@@ -118,7 +118,7 @@ export default function Goals() {
 
       {/* Goals Grid */}
       {goals.length > 0 ? (
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           {goals.map((goal) => {
             const progress = calculateProgress(goal);
             const timeToGoal = calculateTimeToGoal(goal);

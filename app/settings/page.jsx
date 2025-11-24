@@ -75,9 +75,9 @@ export default function Settings() {
   return (
     <div className="w-full max-w-4xl">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-[30px] font-bold text-gray-900 mb-1 tracking-tight leading-tight">Settings</h1>
-        <p className="text-sm text-gray-500 font-normal">Manage your app preferences and account settings</p>
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-[30px] font-bold text-gray-900 mb-1 tracking-tight leading-tight">Settings</h1>
+        <p className="text-xs sm:text-sm text-gray-500 font-normal">Manage your app preferences and account settings</p>
       </div>
 
       {/* Settings Sections */}
@@ -221,7 +221,7 @@ export default function Settings() {
             </div>
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-5 border border-gray-200">
               <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center mb-3 shadow-sm">
                 <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -2,9 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useState } from 'react';
 
 const Navigation = () => {
   const pathname = usePathname();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
     { 
@@ -74,30 +76,72 @@ const Navigation = () => {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 h-16 bg-[#1f1f2e] dark-theme:bg-slate-950 flex items-center justify-between px-8 z-50 shadow-sm border-b border-white/5 transition-colors duration-200">
-      {/* Logo/Brand */}
-      <div className="flex items-center">
-        <span className="text-white font-bold text-xl tracking-tight">LedgerWise</span>
-      </div>
+    <>
+      <nav className="fixed top-0 left-0 right-0 h-16 bg-[#1f1f2e] dark-theme:bg-slate-950 flex items-center justify-between px-4 sm:px-6 md:px-8 z-50 shadow-sm border-b border-white/5 transition-colors duration-200">
+        {/* Logo/Brand */}
+        <div className="flex items-center">
+          <span className="text-white font-bold text-lg sm:text-xl tracking-tight">LedgerWise</span>
+        </div>
 
-      {/* Navigation Items */}
-      <div className="flex items-center gap-2">
-      {navItems.map((item) => (
-        <Link
-          key={item.path}
-          href={item.path}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
-            pathname === item.path
-              ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30'
-              : 'text-gray-400 hover:bg-white/5 hover:text-white'
-          }`}
+        {/* Desktop Navigation Items */}
+        <div className="hidden lg:flex items-center gap-2">
+          {navItems.map((item) => (
+            <Link
+              key={item.path}
+              href={item.path}
+              className={`flex items-center gap-2 px-4 xl:px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                pathname === item.path
+                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30'
+                  : 'text-gray-400 hover:bg-white/5 hover:text-white'
+              }`}
+            >
+              {item.icon}
+              <span className="font-medium tracking-tight">{item.label}</span>
+            </Link>
+          ))}
+        </div>
+
+        {/* Mobile Hamburger Button */}
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="lg:hidden p-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+          aria-label="Toggle menu"
         >
-          {item.icon}
-          <span className="font-medium tracking-tight">{item.label}</span>
-        </Link>
-      ))}
-      </div>
-    </nav>
+          {mobileMenuOpen ? (
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          ) : (
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          )}
+        </button>
+      </nav>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden fixed top-16 left-0 right-0 bg-[#1f1f2e] dark-theme:bg-slate-950 border-b border-white/5 z-40 shadow-lg">
+          <div className="flex flex-col p-4 gap-2">
+            {navItems.map((item) => (
+              <Link
+                key={item.path}
+                href={item.path}
+                onClick={() => setMobileMenuOpen(false)}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  pathname === item.path
+                    ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30'
+                    : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                }`}
+              >
+                {item.icon}
+                <span className="font-medium tracking-tight">{item.label}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

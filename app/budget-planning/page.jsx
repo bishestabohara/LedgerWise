@@ -88,16 +88,16 @@ export default function BudgetPlanning() {
   return (
     <div className="w-full">
       {/* Header */}
-      <div className="flex justify-between items-start mb-8">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6 sm:mb-8">
         <div>
-          <h1 className="text-[30px] font-bold text-gray-900 mb-1 tracking-tight leading-tight">Budget Planning</h1>
-          <p className="text-sm text-gray-500 font-normal">Create and manage your monthly budgets</p>
+          <h1 className="text-2xl sm:text-[30px] font-bold text-gray-900 mb-1 tracking-tight leading-tight">Budget Planning</h1>
+          <p className="text-xs sm:text-sm text-gray-500 font-normal">Create and manage your monthly budgets</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-2 sm:gap-3">
           {!currentBudget && (
             <button
               onClick={() => setShowCreateForm(true)}
-              className="px-5 py-2.5 bg-gray-900 text-white rounded-xl text-sm font-semibold hover:bg-gray-800 shadow-md shadow-gray-900/20 hover:shadow-lg hover:shadow-gray-900/30 transition-all duration-200 hover:-translate-y-0.5"
+              className="w-full sm:w-auto px-4 sm:px-5 py-2.5 bg-gray-900 text-white rounded-xl text-xs sm:text-sm font-semibold hover:bg-gray-800 shadow-md shadow-gray-900/20 hover:shadow-lg hover:shadow-gray-900/30 transition-all duration-200"
             >
               + Create Budget
             </button>
@@ -106,13 +106,13 @@ export default function BudgetPlanning() {
             <>
               <button
                 onClick={() => setShowEditForm(true)}
-                className="px-5 py-2.5 bg-blue-500 text-white rounded-xl text-sm font-semibold hover:bg-blue-600 shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-200 hover:-translate-y-0.5"
+                className="flex-1 sm:flex-none px-4 sm:px-5 py-2.5 bg-blue-500 text-white rounded-xl text-xs sm:text-sm font-semibold hover:bg-blue-600 shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-200"
               >
                 Edit Budget
               </button>
               <button
                 onClick={handleDeleteBudget}
-                className="px-5 py-2.5 bg-red-500 text-white rounded-xl text-sm font-semibold hover:bg-red-600 shadow-md shadow-red-500/20 hover:shadow-lg hover:shadow-red-500/30 transition-all duration-200 hover:-translate-y-0.5"
+                className="flex-1 sm:flex-none px-4 sm:px-5 py-2.5 bg-red-500 text-white rounded-xl text-xs sm:text-sm font-semibold hover:bg-red-600 shadow-md shadow-red-500/20 hover:shadow-lg hover:shadow-red-500/30 transition-all duration-200"
               >
                 Delete
               </button>
@@ -239,7 +239,7 @@ export default function BudgetPlanning() {
           {currentBudget.categories && currentBudget.categories.length > 0 && (
             <div>
               <h3 className="text-lg font-bold text-gray-900 mb-4 tracking-tight">Budget Categories</h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 {currentBudget.categories.map((category, index) => (
                   <div
                     key={index}

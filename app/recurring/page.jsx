@@ -106,32 +106,34 @@ export default function Recurring() {
   return (
     <div className="w-full">
       {/* Header */}
-      <div className="flex justify-between items-start mb-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6">
         <div>
-          <h1 className="text-xl font-bold text-gray-900 mb-0.5 tracking-tight">Recurring Expenses</h1>
-          <p className="text-[13px] text-gray-500 font-normal">Manage your recurring payments and subscriptions</p>
+          <h1 className="text-lg sm:text-xl font-bold text-gray-900 mb-0.5 tracking-tight">Recurring Expenses</h1>
+          <p className="text-xs sm:text-[13px] text-gray-500 font-normal">Manage your recurring payments and subscriptions</p>
         </div>
         <div className="flex gap-2">
           <button
             onClick={() => setShowAddForm(true)}
-            className="px-4 py-2 bg-emerald-500 text-white rounded-lg text-sm font-semibold hover:bg-emerald-600 transition-all flex items-center gap-1.5"
+            className="flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-emerald-500 text-white rounded-lg text-xs sm:text-sm font-semibold hover:bg-emerald-600 transition-all flex items-center justify-center gap-1.5"
           >
             <span className="text-base">+</span>
-            Add Recurring Expense
+            <span className="hidden sm:inline">Add Recurring Expense</span>
+            <span className="sm:hidden">Add</span>
           </button>
           <button
             onClick={handleDeleteSelected}
             disabled={selectedExpenses.size === 0}
-            className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm font-semibold hover:bg-red-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center gap-1.5"
+            className="flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-red-500 text-white rounded-lg text-xs sm:text-sm font-semibold hover:bg-red-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-1.5"
           >
             <span className="text-base">×</span>
-            Delete ({selectedExpenses.size})
+            <span className="hidden sm:inline">Delete ({selectedExpenses.size})</span>
+            <span className="sm:hidden">({selectedExpenses.size})</span>
           </button>
         </div>
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6">
         <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-5 border border-purple-200">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 rounded-lg bg-purple-500 flex items-center justify-center text-white text-lg font-bold">

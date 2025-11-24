@@ -16,7 +16,7 @@ export default function RootLayout({ children }) {
           <ThemeInitializer />
           <div className="min-h-screen flex flex-col">
             <Navigation />
-            <main className="flex-1 pt-24 px-12 pb-10 max-w-[1400px] mx-auto w-full">
+            <main className="flex-1 pt-20 sm:pt-24 px-4 sm:px-6 md:px-8 lg:px-12 pb-6 sm:pb-10 max-w-[1400px] mx-auto w-full">
               {children}
             </main>
           </div>
