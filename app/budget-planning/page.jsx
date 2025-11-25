@@ -191,7 +191,6 @@ export default function BudgetPlanning() {
   };
 
   const handleEditBudget = (budget) => {
-    console.log('Editing budget:', budget);
     setEditingBudget(budget);
     setFormData({
       limit: budget.limit.toString(),
@@ -201,7 +200,6 @@ export default function BudgetPlanning() {
       }))
     });
     setShowEditForm(true);
-    console.log('Edit modal should now be open');
   };
 
   const handleAddCategory = () => {
@@ -534,9 +532,6 @@ export default function BudgetPlanning() {
 
       {/* Modal for Editing Budget */}
       {showEditForm && editingBudget && (
-        <>
-          {console.log('Edit modal rendering:', { showEditForm, editingBudget })}
-          <div
         <div
           className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
           onClick={() => setShowEditForm(false)}
