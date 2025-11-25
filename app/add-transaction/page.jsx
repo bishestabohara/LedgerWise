@@ -60,19 +60,16 @@ export default function AddTransaction() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-5 sm:gap-6">
           <div className="flex flex-col gap-2">
             <label htmlFor="type" className="text-xs sm:text-sm font-semibold text-gray-700 tracking-tight">Type</label>
-            <div className="flex items-center gap-2 sm:gap-3">
-              <select
-                id="type"
-                name="type"
-                value={formData.type}
-                onChange={handleChange}
-                className="flex-1 px-3 sm:px-4 py-3 sm:py-3.5 border border-gray-300 rounded-xl text-sm sm:text-[15px] bg-white text-gray-900 hover:border-gray-400 focus:border-purple-600 focus:ring-2 focus:ring-purple-600/10 outline-none transition-all"
-              >
-                <option value="expense">Expense</option>
-                <option value="income">Income</option>
-              </select>
-              <span className="bg-gray-100 text-gray-600 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-lg text-[10px] sm:text-[11px] font-bold uppercase tracking-wide whitespace-nowrap">Preview</span>
-            </div>
+            <select
+              id="type"
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              className="px-3 sm:px-4 py-3 sm:py-3.5 border border-gray-300 rounded-xl text-sm sm:text-[15px] bg-white text-gray-900 hover:border-gray-400 focus:border-purple-600 focus:ring-2 focus:ring-purple-600/10 outline-none transition-all"
+            >
+              <option value="expense">Expense</option>
+              <option value="income">Income</option>
+            </select>
           </div>
 
           <div className="flex flex-col gap-2">
