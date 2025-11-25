@@ -191,7 +191,7 @@ export default function Goals() {
                     type="number"
                     step="0.01"
                     min="0"
-                    placeholder="Update amount"
+                    placeholder="Update current amount"
                     className="flex-1 px-4 py-2.5 border border-gray-300 rounded-xl text-sm bg-white text-gray-900 placeholder-gray-400 hover:border-gray-400 focus:border-purple-600 focus:ring-2 focus:ring-purple-600/10 outline-none transition-all"
                     onKeyPress={(e) => {
                       if (e.key === 'Enter') {
