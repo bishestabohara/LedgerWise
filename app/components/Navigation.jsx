@@ -79,7 +79,14 @@ const Navigation = () => {
     <>
       <nav className="fixed top-0 left-0 right-0 h-16 bg-[#1f1f2e] dark-theme:bg-slate-950 flex items-center justify-between px-4 sm:px-6 md:px-8 z-50 shadow-sm border-b border-white/5 transition-colors duration-200">
         {/* Logo/Brand */}
-        <div className="flex items-center">
+        <div className="flex items-center gap-3">
+          {/* Logo Icon */}
+          <div className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg shadow-lg">
+            <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            </svg>
+          </div>
+          {/* Brand Name */}
           <span className="text-white font-bold text-lg sm:text-xl tracking-tight">LedgerWise</span>
         </div>
 
