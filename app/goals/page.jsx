@@ -25,26 +25,6 @@ export default function Goals() {
     return Math.min((goal.currentAmount / goal.targetAmount) * 100, 100);
   };
 
-  const calculateTimeToGoal = (goal) => {
-    const remaining = goal.targetAmount - goal.currentAmount;
-    const monthlySavings = Math.max(getTotalBalance(), 0);
-    
-    if (monthlySavings <= 0) {
-      return 'N/A (negative balance)';
-    }
-    
-    const months = Math.ceil(remaining / monthlySavings);
-    if (months < 12) {
-      return `${months} month${months !== 1 ? 's' : ''}`;
-    } else {
-      const years = Math.floor(months / 12);
-      const remainingMonths = months % 12;
-      if (remainingMonths === 0) {
-        return `${years} year${years !== 1 ? 's' : ''}`;
-      }
-      return `${years} year${years !== 1 ? 's' : ''} ${remainingMonths} month${remainingMonths !== 1 ? 's' : ''}`;
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -121,7 +101,6 @@ export default function Goals() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           {goals.map((goal) => {
             const progress = calculateProgress(goal);
-            const timeToGoal = calculateTimeToGoal(goal);
             
             return (
               <div
@@ -180,10 +159,6 @@ export default function Goals() {
                       </span>
                     </div>
                   )}
-                  <div className="flex justify-between items-center pt-2.5 border-t border-gray-200">
-                    <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Time to Goal</span>
-                    <span className="text-sm font-bold text-purple-600">{timeToGoal}</span>
-                  </div>
                 </div>
 
                 <div className="flex gap-2">
