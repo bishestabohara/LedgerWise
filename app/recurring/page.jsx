@@ -59,7 +59,6 @@ export default function Recurring() {
       return sum + e.amount;
     }, 0);
 
-  const activeSubscriptions = recurringExpenses.filter(e => e.status === 'active').length;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -147,28 +146,16 @@ export default function Recurring() {
           <p className="text-xs text-purple-600 font-medium">** Tracked expenses 📈</p>
         </div>
 
-        <div className="bg-gradient-to-br from-teal-50 to-teal-100 rounded-xl p-5 border border-teal-200">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-lg bg-teal-500 flex items-center justify-center text-white text-xl font-bold">
-              ✓
-            </div>
-            <div className="flex-1">
-              <p className="text-xs text-teal-700 font-semibold mb-0.5">Active Subscriptions</p>
-              <p className="text-2xl font-bold text-gray-900">{activeSubscriptions}</p>
-            </div>
-          </div>
-          <p className="text-xs text-teal-600 font-medium">Out of {recurringExpenses.length} total</p>
-        </div>
 
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-5 border border-blue-200">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 rounded-lg bg-blue-500 flex items-center justify-center text-white text-lg">
               📅
-            </div>
+          </div>
             <div className="flex-1">
               <p className="text-xs text-blue-700 font-semibold mb-0.5">Total Yearly</p>
               <p className="text-2xl font-bold text-gray-900">{formatCurrency(totalYearly)}</p>
-            </div>
+        </div>
           </div>
           <p className="text-xs text-blue-600 font-medium">Annual projection</p>
         </div>
@@ -194,58 +181,58 @@ export default function Recurring() {
       <div className="bg-white rounded-lg border border-gray-200 p-4 mb-4">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
               className="px-3 py-1.5 border border-gray-200 rounded-md text-sm bg-white text-gray-700 font-medium hover:border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all"
-            >
-              <option value="all">All Categories</option>
+          >
+            <option value="all">All Categories</option>
               {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
-            </select>
-            <select
-              value={selectedFrequency}
-              onChange={(e) => setSelectedFrequency(e.target.value)}
+          </select>
+          <select
+            value={selectedFrequency}
+            onChange={(e) => setSelectedFrequency(e.target.value)}
               className="px-3 py-1.5 border border-gray-200 rounded-md text-sm bg-white text-gray-700 font-medium hover:border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all"
-            >
-              <option value="all">All Frequencies</option>
+          >
+            <option value="all">All Frequencies</option>
               {frequencies.map(freq => <option key={freq} value={freq}>{freq.charAt(0).toUpperCase() + freq.slice(1)}</option>)}
-            </select>
+          </select>
           </div>
           <p className="text-xs text-gray-500 font-medium">{filteredExpenses.length} expenses found</p>
-        </div>
-        
+      </div>
+
         <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
           <span className="text-sm text-gray-600 font-medium">Sort by:</span>
-          <button
-            onClick={() => setSortBy('nextDueDate')}
+        <button
+          onClick={() => setSortBy('nextDueDate')}
             className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
               sortBy === 'nextDueDate'
                 ? 'bg-gray-900 text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
-          >
-            Next Due Date
-          </button>
-          <button
-            onClick={() => setSortBy('amount')}
+        >
+          Next Due Date
+        </button>
+        <button
+          onClick={() => setSortBy('amount')}
             className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
               sortBy === 'amount'
                 ? 'bg-gray-900 text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
-          >
-            Amount
-          </button>
-          <button
-            onClick={() => setSortBy('name')}
+        >
+          Amount
+        </button>
+        <button
+          onClick={() => setSortBy('name')}
             className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
               sortBy === 'name'
                 ? 'bg-gray-900 text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
-          >
-            Name
-          </button>
+        >
+          Name
+        </button>
         </div>
       </div>
 
@@ -269,8 +256,6 @@ export default function Recurring() {
               <th className="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wide">Amount</th>
               <th className="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wide">Frequency</th>
               <th className="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wide">Next Due Date</th>
-              <th className="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wide">Status</th>
-              <th className="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wide">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -295,25 +280,11 @@ export default function Recurring() {
                   <td className="px-4 py-3 text-sm font-semibold text-gray-900">{formatCurrency(expense.amount)}</td>
                   <td className="px-4 py-3 text-sm text-gray-700 capitalize">{expense.frequency}</td>
                   <td className="px-4 py-3 text-sm text-gray-700">{format(parseISO(expense.nextDueDate), 'MMM d, yyyy')}</td>
-                  <td className="px-4 py-3">
-                    <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold ${
-                      expense.status === 'active' ? 'bg-teal-100 text-teal-700' : 'bg-gray-100 text-gray-700'
-                    }`}>
-                      {expense.status === 'active' && '+ '}Active
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <button className="text-gray-400 hover:text-gray-600 transition-colors">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                      </svg>
-                    </button>
-                  </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="8" className="px-4 py-12 text-center text-gray-400 text-sm font-medium">
+                <td colSpan="6" className="px-4 py-12 text-center text-gray-400 text-sm font-medium">
                   No recurring expenses yet. Add your first one!
                 </td>
               </tr>
