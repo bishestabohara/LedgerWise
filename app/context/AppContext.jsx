@@ -36,6 +36,7 @@ export const AppProvider = ({ children }) => {
       try {
         const savedTransactions = localStorage.getItem('ledgerwise-transactions');
         const savedBudgets = localStorage.getItem('ledgerwise-budgets');
+        const savedCurrentBudget = localStorage.getItem('ledgerwise-current-budget');
         const savedRecurring = localStorage.getItem('ledgerwise-recurring');
         const savedGoals = localStorage.getItem('ledgerwise-goals');
         const savedSettings = localStorage.getItem('ledgerwise-settings');
@@ -44,7 +45,18 @@ export const AppProvider = ({ children }) => {
         if (savedBudgets) {
           const parsedBudgets = JSON.parse(savedBudgets);
           setBudgets(parsedBudgets);
-          if (parsedBudgets.length > 0) {
+
+          // Set current budget - try saved current budget first, then fallback to first budget
+          if (savedCurrentBudget) {
+            const parsedCurrentBudget = JSON.parse(savedCurrentBudget);
+            // Verify the saved current budget still exists in the budgets array
+            const currentBudgetExists = parsedBudgets.find(b => b.id === parsedCurrentBudget.id);
+            if (currentBudgetExists) {
+              setCurrentBudget(parsedCurrentBudget);
+            } else if (parsedBudgets.length > 0) {
+              setCurrentBudget(parsedBudgets[0]);
+            }
+          } else if (parsedBudgets.length > 0) {
             setCurrentBudget(parsedBudgets[0]);
           }
         }
@@ -74,6 +86,12 @@ export const AppProvider = ({ children }) => {
       localStorage.setItem('ledgerwise-budgets', JSON.stringify(budgets));
     }
   }, [budgets, loading]);
+
+  useEffect(() => {
+    if (!loading && currentBudget) {
+      localStorage.setItem('ledgerwise-current-budget', JSON.stringify(currentBudget));
+    }
+  }, [currentBudget, loading]);
 
   useEffect(() => {
     if (!loading) {
@@ -134,9 +152,16 @@ export const AppProvider = ({ children }) => {
   };
 
   const deleteBudget = async (id) => {
-    setBudgets(prev => prev.filter(b => b.id !== id));
+    const newBudgets = budgets.filter(b => b.id !== id);
+    setBudgets(newBudgets);
+
     if (currentBudget?.id === id) {
-      setCurrentBudget(null);
+      // If the current budget is being deleted, switch to the first available budget
+      if (newBudgets.length > 0) {
+        setCurrentBudget(newBudgets[0]);
+      } else {
+        setCurrentBudget(null);
+      }
     }
   };
 

@@ -160,14 +160,9 @@ export default function BudgetPlanning() {
     }
   };
 
-  const handleSelectBudget = async (budget) => {
-    try {
-      setCurrentBudget(budget);
-      showNotification(`Switched to ${budget.limit ? `$${budget.limit.toLocaleString()}` : 'budget'} budget`);
-    } catch (error) {
-      console.error('Error selecting budget:', error);
-      showNotification('Failed to switch budget', 'error');
-    }
+  const handleSelectBudget = (budget) => {
+    setCurrentBudget(budget);
+    showNotification(`Switched to ${budget.limit ? `$${budget.limit.toLocaleString()}` : 'budget'} budget`);
   };
 
   const handleDeleteSpecificBudget = async (budgetId) => {
@@ -191,7 +186,6 @@ export default function BudgetPlanning() {
   };
 
   const handleEditBudget = (budget) => {
-    console.log('Editing budget:', budget);
     setEditingBudget(budget);
     setFormData({
       limit: budget.limit.toString(),
@@ -201,7 +195,6 @@ export default function BudgetPlanning() {
       }))
     });
     setShowEditForm(true);
-    console.log('Edit modal should now be visible');
   };
 
   const handleAddCategory = () => {
