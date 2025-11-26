@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useApp, TRANSACTION_CATEGORIES } from '../context/AppContext';
+import { useApp, EXPENSE_CATEGORIES } from '../context/AppContext';
 import { format, parseISO } from 'date-fns';
 
 export default function BudgetPlanning() {
-  const { budgets, currentBudget, createBudget, updateBudget, deleteBudget, setCurrentBudget, settings, getBudgetProgress, TRANSACTION_CATEGORIES } = useApp();
+  const { budgets, currentBudget, createBudget, updateBudget, deleteBudget, setCurrentBudget, settings, getBudgetProgress, EXPENSE_CATEGORIES } = useApp();
 
   // UI State
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -505,7 +505,7 @@ export default function BudgetPlanning() {
                         required
                       >
                         <option value="">Select category</option>
-                        {TRANSACTION_CATEGORIES.map(cat => (
+                        {EXPENSE_CATEGORIES.map(cat => (
                           <option key={cat} value={cat}>{cat}</option>
                         ))}
                       </select>

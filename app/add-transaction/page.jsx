@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useApp, TRANSACTION_CATEGORIES } from '../context/AppContext';
+import { useApp, EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '../context/AppContext';
 
 export default function AddTransaction() {
   const { addTransaction, settings } = useApp();
@@ -14,10 +14,26 @@ export default function AddTransaction() {
     category: ''
   });
 
-  const categories = TRANSACTION_CATEGORIES;
+  // Get appropriate categories based on transaction type
+  const getCategories = () => {
+    return formData.type === 'income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
+  };
 
   const handleChange = (e) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setFormData(prev => {
+      const updated = { ...prev, [name]: value };
+
+      // Reset category if switching between income/expense types
+      if (name === 'type' && prev.category) {
+        const newCategories = value === 'income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
+        if (!newCategories.includes(prev.category)) {
+          updated.category = '';
+        }
+      }
+
+      return updated;
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -115,7 +131,7 @@ export default function AddTransaction() {
               required
             >
               <option value="">Select a category</option>
-              {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+              {getCategories().map(cat => <option key={cat} value={cat}>{cat}</option>)}
             </select>
           </div>
 

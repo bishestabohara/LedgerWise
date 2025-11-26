@@ -3,11 +3,18 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { format, startOfMonth, endOfMonth, isAfter, parseISO } from 'date-fns';
 
-// Shared categories for transactions and budgets
-export const TRANSACTION_CATEGORIES = [
+// Transaction categories
+export const EXPENSE_CATEGORIES = [
   'Groceries', 'Bills', 'Entertainment', 'Transportation', 'Housing',
   'Health & Fitness', 'Utilities', 'Shopping', 'Food & Dining', 'Education', 'Other'
 ];
+
+export const INCOME_CATEGORIES = [
+  'Salary', 'Freelance', 'Business', 'Investment', 'Cash', 'Gift', 'Refund', 'Other Income'
+];
+
+// For backward compatibility
+export const TRANSACTION_CATEGORIES = [...EXPENSE_CATEGORIES, ...INCOME_CATEGORIES];
 
 const AppContext = createContext();
 
