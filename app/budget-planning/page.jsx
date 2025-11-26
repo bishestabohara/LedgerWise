@@ -191,6 +191,7 @@ export default function BudgetPlanning() {
   };
 
   const handleEditBudget = (budget) => {
+    console.log('Editing budget:', budget);
     setEditingBudget(budget);
     setFormData({
       limit: budget.limit.toString(),
@@ -200,6 +201,7 @@ export default function BudgetPlanning() {
       }))
     });
     setShowEditForm(true);
+    console.log('Edit modal should now be visible');
   };
 
   const handleAddCategory = () => {
