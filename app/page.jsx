@@ -2,6 +2,7 @@
 
 import { useApp } from './context/AppContext';
 import { format, parseISO } from 'date-fns';
+import { useRouter } from 'next/navigation';
 
 export default function Dashboard() {
   const {
@@ -10,8 +11,10 @@ export default function Dashboard() {
     getTotalExpenses,
     getUpcomingBills,
     getRecentTransactions,
+    recurringExpenses,
     settings
   } = useApp();
+  const router = useRouter();
 
   const totalBalance = getTotalBalance();
   const totalIncome = getTotalIncome();
@@ -20,6 +23,18 @@ export default function Dashboard() {
   const recentTransactions = getRecentTransactions();
   const currentDate = new Date();
   const monthYear = format(currentDate, 'MMMM yyyy');
+
+  // Find the closest upcoming recurring expense
+  const getClosestRecurringExpense = () => {
+    const now = new Date();
+    const upcoming = recurringExpenses
+      .filter(expense => parseISO(expense.nextDueDate) >= now)
+      .sort((a, b) => parseISO(a.nextDueDate) - parseISO(b.nextDueDate));
+
+    return upcoming.length > 0 ? upcoming[0] : null;
+  };
+
+  const closestRecurringExpense = getClosestRecurringExpense();
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-US', {
@@ -87,6 +102,48 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* Upcoming Recurring Expense Alert */}
+      {closestRecurringExpense && (
+        <div className="mb-6 sm:mb-8">
+          <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-4 sm:p-5 shadow-sm">
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-amber-500 flex items-center justify-center">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                  </svg>
+                </div>
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="text-sm sm:text-base font-semibold text-amber-800">Upcoming Payment Alert</h3>
+                  <span className="bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-xs font-medium">
+                    Due Soon
+                  </span>
+                </div>
+                <p className="text-sm text-amber-700 mb-2">
+                  <span className="font-semibold">{closestRecurringExpense.name}</span> - {formatCurrency(closestRecurringExpense.amount)} due on{' '}
+                  <span className="font-semibold">{format(parseISO(closestRecurringExpense.nextDueDate), 'MMM d, yyyy')}</span>
+                </p>
+                <div className="flex items-center gap-4 text-xs text-amber-600">
+                  <span className="capitalize">{closestRecurringExpense.frequency}</span>
+                  <span>•</span>
+                  <span>{closestRecurringExpense.category}</span>
+                </div>
+              </div>
+              <div className="flex-shrink-0">
+                <button
+                  onClick={() => router.push('/recurring')}
+                  className="text-amber-600 hover:text-amber-800 hover:bg-amber-100 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
+                >
+                  View All
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Upcoming Bills Section */}
       <div className="mb-8 sm:mb-10">
