@@ -3,6 +3,12 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { format, startOfMonth, endOfMonth, isAfter, parseISO } from 'date-fns';
 
+// Shared categories for transactions and budgets
+export const TRANSACTION_CATEGORIES = [
+  'Groceries', 'Bills', 'Entertainment', 'Transportation', 'Housing',
+  'Health & Fitness', 'Utilities', 'Shopping', 'Food & Dining', 'Education', 'Other'
+];
+
 const AppContext = createContext();
 
 export const useApp = () => {
@@ -257,6 +263,47 @@ export const AppProvider = ({ children }) => {
     return transactions.reduce((sum, t) => sum + (t.amount || 0), 0);
   };
 
+  // Budget analysis functions
+  const getBudgetCategorySpending = (budgetId, category) => {
+    const budget = budgets.find(b => b.id === budgetId);
+    if (!budget) return 0;
+
+    // Calculate spending for this category (all transactions with this category)
+    return transactions
+      .filter(t => t.category === category && t.amount < 0) // Only expenses
+      .reduce((sum, t) => sum + Math.abs(t.amount), 0);
+  };
+
+  const getBudgetProgress = (budgetId) => {
+    const budget = budgets.find(b => b.id === budgetId);
+    if (!budget || !budget.categories) return { totalSpent: 0, totalBudget: 0, categories: [] };
+
+    let totalSpent = 0;
+    let totalBudget = budget.limit;
+
+    const categoryProgress = budget.categories.map(cat => {
+      const spent = getBudgetCategorySpending(budgetId, cat.name);
+      const budgeted = (budget.limit * cat.percentage) / 100;
+      totalSpent += spent;
+
+      return {
+        name: cat.name,
+        budgeted: budgeted,
+        spent: spent,
+        remaining: Math.max(0, budgeted - spent),
+        percentage: cat.percentage,
+        status: spent > budgeted ? 'over' : spent > budgeted * 0.8 ? 'warning' : 'good'
+      };
+    });
+
+    return {
+      totalSpent,
+      totalBudget,
+      categories: categoryProgress,
+      overallProgress: Math.min((totalSpent / totalBudget) * 100, 100)
+    };
+  };
+
   const getTotalIncome = () => {
     const now = new Date();
     const monthStart = startOfMonth(now);
@@ -329,6 +376,9 @@ export const AppProvider = ({ children }) => {
     getTotalIncome,
     getTotalExpenses,
     getUpcomingBills,
+    getBudgetCategorySpending,
+    getBudgetProgress,
+    TRANSACTION_CATEGORIES,
     getRecentTransactions
   };
 

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useApp } from '../context/AppContext';
+import { useApp, TRANSACTION_CATEGORIES } from '../context/AppContext';
 
 export default function AddTransaction() {
   const { addTransaction, settings } = useApp();
@@ -14,10 +14,7 @@ export default function AddTransaction() {
     category: ''
   });
 
-  const categories = [
-    'Groceries', 'Bills', 'Entertainment', 'Transportation', 'Housing',
-    'Health & Fitness', 'Utilities', 'Shopping', 'Food & Dining', 'Education', 'Other'
-  ];
+  const categories = TRANSACTION_CATEGORIES;
 
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));

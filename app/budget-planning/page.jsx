@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useApp } from '../context/AppContext';
+import { useApp, TRANSACTION_CATEGORIES } from '../context/AppContext';
 import { format, parseISO } from 'date-fns';
 
 export default function BudgetPlanning() {
-  const { budgets, currentBudget, createBudget, updateBudget, deleteBudget, setCurrentBudget, settings } = useApp();
+  const { budgets, currentBudget, createBudget, updateBudget, deleteBudget, setCurrentBudget, settings, getBudgetProgress, TRANSACTION_CATEGORIES } = useApp();
 
   // UI State
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -322,32 +322,63 @@ export default function BudgetPlanning() {
 
           <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4 tracking-tight">Select Active Budget</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-            {budgets.map((budget) => (
-              <div
-                key={budget.id}
-                onClick={() => handleSelectBudget(budget)}
-                className={`bg-white rounded-2xl p-4 sm:p-5 shadow-sm border cursor-pointer transition-all duration-200 hover:shadow-md ${
-                  currentBudget?.id === budget.id
-                    ? 'border-emerald-500 bg-emerald-50/50 ring-2 ring-emerald-500/20'
-                    : 'border-gray-200 hover:border-gray-300'
-                }`}
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-sm sm:text-base font-bold text-gray-900 truncate">
-                        {formatCurrency(budget.limit)}
-                      </h3>
-                      {currentBudget?.id === budget.id && (
-                        <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-xs font-semibold">
-                          Active
-                        </span>
-                      )}
+            {budgets.map((budget) => {
+              const progress = getBudgetProgress(budget.id);
+              return (
+                <div
+                  key={budget.id}
+                  onClick={() => handleSelectBudget(budget)}
+                  className={`bg-white rounded-2xl p-4 sm:p-5 shadow-sm border cursor-pointer transition-all duration-200 hover:shadow-md ${
+                    currentBudget?.id === budget.id
+                      ? 'border-emerald-500 bg-emerald-50/50 ring-2 ring-emerald-500/20'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="text-sm sm:text-base font-bold text-gray-900 truncate">
+                          {formatCurrency(budget.limit)}
+                        </h3>
+                        {currentBudget?.id === budget.id && (
+                          <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-xs font-semibold">
+                            Active
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-500 mb-2">
+                        Created {format(new Date(budget.createdAt || budget.month), 'MMM d, yyyy')}
+                      </p>
+
+                      {/* Budget Progress Summary */}
+                      <div className="space-y-1">
+                        <div className="flex justify-between items-center text-xs">
+                          <span className="text-gray-600">Spent:</span>
+                          <span className={`font-semibold ${progress.totalSpent > budget.limit ? 'text-red-600' : 'text-emerald-600'}`}>
+                            {formatCurrency(progress.totalSpent)}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center text-xs">
+                          <span className="text-gray-600">Progress:</span>
+                          <span className={`font-semibold ${progress.overallProgress > 80 ? 'text-yellow-600' : 'text-gray-900'}`}>
+                            {progress.overallProgress.toFixed(1)}%
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Progress Bar */}
+                      <div className="mt-2">
+                        <div className="w-full bg-gray-200 rounded-full h-1.5">
+                          <div
+                            className={`h-1.5 rounded-full transition-all duration-500 ${
+                              progress.totalSpent > budget.limit ? 'bg-red-500' :
+                              progress.overallProgress > 80 ? 'bg-yellow-500' : 'bg-emerald-500'
+                            }`}
+                            style={{ width: `${Math.min(progress.overallProgress, 100)}%` }}
+                          ></div>
+                        </div>
+                      </div>
                     </div>
-                    <p className="text-xs text-gray-500">
-                      Created {format(new Date(budget.createdAt || budget.month), 'MMM d, yyyy')}
-                    </p>
-                  </div>
                   <div className="flex gap-1 ml-2">
                     <button
                       onClick={(e) => {
@@ -409,7 +440,8 @@ export default function BudgetPlanning() {
                   )}
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
@@ -466,14 +498,17 @@ export default function BudgetPlanning() {
                 <div className="flex flex-col gap-3">
                   {formData.categories.map((category, index) => (
                     <div key={index} className="flex items-center gap-3">
-                      <input
-                        type="text"
-                        placeholder="Category name"
+                      <select
                         value={category.name}
                         onChange={(e) => handleCategoryChange(index, 'name', e.target.value)}
-                        className="flex-1 px-4 py-3 border border-gray-300 rounded-xl text-sm bg-white text-gray-900 placeholder-gray-400 focus:border-purple-600 focus:ring-2 focus:ring-purple-600/10 outline-none transition-all"
+                        className="flex-1 px-4 py-3 border border-gray-300 rounded-xl text-sm bg-white text-gray-900 focus:border-purple-600 focus:ring-2 focus:ring-purple-600/10 outline-none transition-all"
                         required
-                      />
+                      >
+                        <option value="">Select category</option>
+                        {TRANSACTION_CATEGORIES.map(cat => (
+                          <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                      </select>
                       <input
                         type="number"
                         step="0.1"
@@ -661,48 +696,107 @@ export default function BudgetPlanning() {
       )}
 
       {/* Active Budget Display */}
-      {currentBudget ? (
-        <div>
-          <div className="bg-white rounded-2xl p-5 sm:p-7 shadow-[0_1px_3px_rgba(0,0,0,0.08)] border border-gray-200/80 mb-6">
-            <div className="flex justify-between items-start mb-2">
-              <h2 className="text-lg sm:text-xl font-bold text-gray-900 tracking-tight">Active Budget Details</h2>
-              <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">Active</span>
-            </div>
-            <p className="text-2xl sm:text-[32px] font-bold text-gray-900 tracking-tight leading-none">{formatCurrency(currentBudget.limit)}</p>
-            <p className="text-xs text-gray-500 font-medium mt-1">Monthly budget limit</p>
-          </div>
-
-          {currentBudget.categories && currentBudget.categories.length > 0 && (
-            <div>
-              <h3 className="text-lg font-bold text-gray-900 mb-4 tracking-tight">Budget Categories</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              {currentBudget.categories.map((category, index) => (
-                  <div
-                    key={index}
-                    className="bg-white rounded-2xl p-5 shadow-[0_1px_3px_rgba(0,0,0,0.08)] border border-gray-200/80 hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)] transition-all duration-200 hover:-translate-y-0.5"
-                  >
-                    <div className="flex justify-between items-start mb-3">
-                      <h4 className="text-base font-semibold text-gray-900">{category.name}</h4>
-                      <span className="bg-purple-100 text-purple-700 px-2.5 py-1 rounded-md text-xs font-bold">
-                        {category.percentage}%
-                      </span>
+      {currentBudget ? (() => {
+        const progress = getBudgetProgress(currentBudget.id);
+        return (
+          <div>
+            <div className="bg-white rounded-2xl p-5 sm:p-7 shadow-[0_1px_3px_rgba(0,0,0,0.08)] border border-gray-200/80 mb-6">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-900 tracking-tight mb-2">Active Budget Details</h2>
+                  <div className="flex items-center gap-4 text-sm">
+                    <span className="text-gray-600">Budget: <span className="font-semibold text-gray-900">{formatCurrency(currentBudget.limit)}</span></span>
+                    <span className="text-gray-600">Spent: <span className={`font-semibold ${progress.totalSpent > currentBudget.limit ? 'text-red-600' : 'text-emerald-600'}`}>{formatCurrency(progress.totalSpent)}</span></span>
+                    <span className={`px-2 py-1 rounded text-xs font-bold ${progress.totalSpent > currentBudget.limit ? 'bg-red-100 text-red-700' : progress.overallProgress > 80 ? 'bg-yellow-100 text-yellow-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                      {progress.overallProgress.toFixed(1)}% Used
+                    </span>
                   </div>
-                    <p className="text-2xl font-bold text-gray-900 tracking-tight">
-                    {formatCurrency((currentBudget.limit * category.percentage) / 100)}
-                    </p>
-                    <div className="mt-3 bg-gray-100 rounded-full h-2 overflow-hidden">
-                      <div
-                        className="bg-purple-600 h-full rounded-full transition-all duration-300"
-                        style={{ width: `${category.percentage}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                ))}
                 </div>
+                <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">Active</span>
+              </div>
+
+              {/* Overall Progress Bar */}
+              <div className="mb-4">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm font-semibold text-gray-700">Overall Progress</span>
+                  <span className="text-sm font-bold text-gray-900">{progress.overallProgress.toFixed(1)}%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-3">
+                  <div
+                    className={`h-3 rounded-full transition-all duration-500 ${
+                      progress.totalSpent > currentBudget.limit ? 'bg-red-500' :
+                      progress.overallProgress > 80 ? 'bg-yellow-500' : 'bg-emerald-500'
+                    }`}
+                    style={{ width: `${Math.min(progress.overallProgress, 100)}%` }}
+                  ></div>
+                </div>
+              </div>
             </div>
-          )}
-        </div>
-      ) : (
+
+            {currentBudget.categories && currentBudget.categories.length > 0 && (
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 mb-4 tracking-tight">Category Breakdown</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                  {progress.categories.map((category, index) => (
+                    <div
+                      key={index}
+                      className="bg-white rounded-2xl p-5 shadow-[0_1px_3px_rgba(0,0,0,0.08)] border border-gray-200/80 hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)] transition-all duration-200 hover:-translate-y-0.5"
+                    >
+                      <div className="flex justify-between items-start mb-3">
+                        <h4 className="text-base font-semibold text-gray-900">{category.name}</h4>
+                        <div className="flex items-center gap-2">
+                          <span className="bg-purple-100 text-purple-700 px-2.5 py-1 rounded-md text-xs font-bold">
+                            {category.percentage}%
+                          </span>
+                          <span className={`px-2 py-1 rounded text-xs font-bold ${
+                            category.status === 'over' ? 'bg-red-100 text-red-700' :
+                            category.status === 'warning' ? 'bg-yellow-100 text-yellow-700' :
+                            'bg-emerald-100 text-emerald-700'
+                          }`}>
+                            {category.status === 'over' ? 'Over' : category.status === 'warning' ? 'High' : 'Good'}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-600">Budgeted:</span>
+                          <span className="font-semibold text-gray-900">{formatCurrency(category.budgeted)}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-600">Spent:</span>
+                          <span className={`font-semibold ${category.spent > category.budgeted ? 'text-red-600' : 'text-emerald-600'}`}>
+                            {formatCurrency(category.spent)}
+                          </span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-600">Remaining:</span>
+                          <span className={`font-semibold ${category.remaining < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                            {formatCurrency(category.remaining)}
+                          </span>
+                        </div>
+
+                        {/* Category Progress Bar */}
+                        <div className="mt-3">
+                          <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div
+                              className={`h-2 rounded-full transition-all duration-500 ${
+                                category.spent > category.budgeted ? 'bg-red-500' :
+                                (category.spent / category.budgeted) > 0.8 ? 'bg-yellow-500' : 'bg-emerald-500'
+                              }`}
+                              style={{ width: `${Math.min((category.spent / category.budgeted) * 100, 100)}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })() : (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
             <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
