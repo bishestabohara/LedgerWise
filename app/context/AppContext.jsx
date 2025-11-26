@@ -28,6 +28,7 @@ export const AppProvider = ({ children }) => {
     }
   });
   const [currentBudget, setCurrentBudget] = useState(null);
+  const [currentGoal, setCurrentGoal] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // Load all data from localStorage on mount
@@ -39,6 +40,7 @@ export const AppProvider = ({ children }) => {
         const savedCurrentBudget = localStorage.getItem('ledgerwise-current-budget');
         const savedRecurring = localStorage.getItem('ledgerwise-recurring');
         const savedGoals = localStorage.getItem('ledgerwise-goals');
+        const savedCurrentGoal = localStorage.getItem('ledgerwise-current-goal');
         const savedSettings = localStorage.getItem('ledgerwise-settings');
 
         if (savedTransactions) setTransactions(JSON.parse(savedTransactions));
@@ -61,7 +63,24 @@ export const AppProvider = ({ children }) => {
           }
         }
         if (savedRecurring) setRecurringExpenses(JSON.parse(savedRecurring));
-        if (savedGoals) setGoals(JSON.parse(savedGoals));
+        if (savedGoals) {
+          const parsedGoals = JSON.parse(savedGoals);
+          setGoals(parsedGoals);
+
+          // Set current goal - try saved current goal first, then fallback to first goal
+          if (savedCurrentGoal) {
+            const parsedCurrentGoal = JSON.parse(savedCurrentGoal);
+            // Verify the saved current goal still exists in the goals array
+            const currentGoalExists = parsedGoals.find(g => g.id === parsedCurrentGoal.id);
+            if (currentGoalExists) {
+              setCurrentGoal(parsedCurrentGoal);
+            } else if (parsedGoals.length > 0) {
+              setCurrentGoal(parsedGoals[0]);
+            }
+          } else if (parsedGoals.length > 0) {
+            setCurrentGoal(parsedGoals[0]);
+          }
+        }
         if (savedSettings) setSettings(JSON.parse(savedSettings));
 
         setLoading(false);
@@ -92,6 +111,12 @@ export const AppProvider = ({ children }) => {
       localStorage.setItem('ledgerwise-current-budget', JSON.stringify(currentBudget));
     }
   }, [currentBudget, loading]);
+
+  useEffect(() => {
+    if (!loading && currentGoal) {
+      localStorage.setItem('ledgerwise-current-goal', JSON.stringify(currentGoal));
+    }
+  }, [currentGoal, loading]);
 
   useEffect(() => {
     if (!loading) {
@@ -195,6 +220,7 @@ export const AppProvider = ({ children }) => {
       createdAt: new Date().toISOString()
     };
     setGoals(prev => [newGoal, ...prev]);
+    setCurrentGoal(newGoal);
     return newGoal;
   };
 
@@ -202,10 +228,23 @@ export const AppProvider = ({ children }) => {
     setGoals(prev =>
       prev.map(g => g.id === id ? { ...g, ...updates } : g)
     );
+    if (currentGoal?.id === id) {
+      setCurrentGoal(prev => ({ ...prev, ...updates }));
+    }
   };
 
   const deleteGoal = async (id) => {
-    setGoals(prev => prev.filter(g => g.id !== id));
+    const newGoals = goals.filter(g => g.id !== id);
+    setGoals(newGoals);
+
+    if (currentGoal?.id === id) {
+      // If the current goal is being deleted, switch to the first available goal
+      if (newGoals.length > 0) {
+        setCurrentGoal(newGoals[0]);
+      } else {
+        setCurrentGoal(null);
+      }
+    }
   };
 
   // Settings functions
@@ -268,6 +307,7 @@ export const AppProvider = ({ children }) => {
     currentBudget,
     recurringExpenses,
     goals,
+    currentGoal,
     settings,
     loading,
     addTransaction,
@@ -276,12 +316,14 @@ export const AppProvider = ({ children }) => {
     createBudget,
     updateBudget,
     deleteBudget,
+    setCurrentBudget,
     addRecurringExpense,
     updateRecurringExpense,
     deleteRecurringExpense,
     addGoal,
     updateGoal,
     deleteGoal,
+    setCurrentGoal,
     updateSettings,
     getTotalBalance,
     getTotalIncome,

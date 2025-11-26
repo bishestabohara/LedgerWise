@@ -1,18 +1,32 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { format, parseISO } from 'date-fns';
 
 export default function Goals() {
-  const { goals, addGoal, updateGoal, deleteGoal, getTotalBalance, settings } = useApp();
+  const { goals, currentGoal, addGoal, updateGoal, deleteGoal, setCurrentGoal, getTotalBalance, settings } = useApp();
   const [showAddForm, setShowAddForm] = useState(false);
+  const [notification, setNotification] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     targetAmount: '',
     currentAmount: '0',
     deadline: ''
   });
+
+  // Clear notification after 3 seconds
+  useEffect(() => {
+    if (notification) {
+      const timer = setTimeout(() => setNotification(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [notification]);
+
+  // Show notification
+  const showNotification = (message, type = 'success') => {
+    setNotification({ message, type });
+  };
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-US', {
@@ -23,6 +37,11 @@ export default function Goals() {
 
   const calculateProgress = (goal) => {
     return Math.min((goal.currentAmount / goal.targetAmount) * 100, 100);
+  };
+
+  const handleSelectGoal = (goal) => {
+    setCurrentGoal(goal);
+    showNotification(`Switched to "${goal.name}" goal`);
   };
 
 
@@ -82,6 +101,25 @@ export default function Goals() {
 
   return (
     <div className="w-full">
+      {/* Notification */}
+      {notification && (
+        <div className={`fixed top-20 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 ${
+          notification.type === 'error'
+            ? 'bg-red-500 text-white'
+            : 'bg-emerald-500 text-white'
+        }`}>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium">{notification.message}</span>
+            <button
+              onClick={() => setNotification(null)}
+              className="text-white/80 hover:text-white"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6 sm:mb-8">
         <div>
@@ -96,101 +134,196 @@ export default function Goals() {
         </button>
       </div>
 
-      {/* Goals Grid */}
-      {goals.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-          {goals.map((goal) => {
-            const progress = calculateProgress(goal);
-            
-            return (
+      {/* Goal Selection */}
+      {goals.length > 0 && (
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4 tracking-tight">Select Active Goal</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            {goals.map((goal) => (
               <div
                 key={goal.id}
-                className="bg-white rounded-2xl p-7 shadow-[0_1px_3px_rgba(0,0,0,0.08)] border border-gray-200/80 hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)] transition-all duration-200"
+                onClick={() => handleSelectGoal(goal)}
+                className={`bg-white rounded-2xl p-4 sm:p-5 shadow-sm border cursor-pointer transition-all duration-200 hover:shadow-md ${
+                  currentGoal?.id === goal.id
+                    ? 'border-emerald-500 bg-emerald-50/50 ring-2 ring-emerald-500/20'
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
               >
-                <div className="flex justify-between items-start mb-5">
-                  <h3 className="text-lg font-bold text-gray-900 tracking-tight">{goal.name}</h3>
-                  <button
-                    onClick={() => handleDeleteGoal(goal.id)}
-                    className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition-all"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                  </button>
-                </div>
-                
-                <div className="mb-5">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-semibold text-gray-600">Progress</span>
-                    <span className="text-sm font-bold text-gray-900">{progress.toFixed(1)}%</span>
-                  </div>
-                  <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden mb-3">
-                    <div
-                      className="bg-gradient-to-r from-purple-500 to-purple-600 h-full rounded-full transition-all duration-500"
-                      style={{ width: `${progress}%` }}
-                    ></div>
-                  </div>
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="font-bold text-gray-900">{formatCurrency(goal.currentAmount)}</span>
-                    <span className="text-gray-500 font-medium">of {formatCurrency(goal.targetAmount)}</span>
-                  </div>
-                </div>
-
-                <div className="bg-gray-50 rounded-xl p-4 mb-5 space-y-2.5">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Target</span>
-                    <span className="text-sm font-bold text-gray-900">{formatCurrency(goal.targetAmount)}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Current</span>
-                    <span className="text-sm font-bold text-gray-900">{formatCurrency(goal.currentAmount)}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Remaining</span>
-                    <span className="text-sm font-bold text-red-500">
-                      {formatCurrency(goal.targetAmount - goal.currentAmount)}
-                    </span>
-                  </div>
-                  {goal.deadline && (
-                    <div className="flex justify-between items-center pt-2.5 border-t border-gray-200">
-                      <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Deadline</span>
-                      <span className="text-sm font-bold text-gray-900">
-                        {format(parseISO(goal.deadline), 'MMM d, yyyy')}
-                      </span>
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="text-sm sm:text-base font-bold text-gray-900 truncate">
+                        {goal.name}
+                      </h3>
+                      {currentGoal?.id === goal.id && (
+                        <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-xs font-semibold">
+                          Active
+                        </span>
+                      )}
                     </div>
-                  )}
+                    <p className="text-xs text-gray-500">
+                      Created {format(new Date(goal.createdAt || goal.id.substring(0, 10)), 'MMM d, yyyy')}
+                    </p>
+                  </div>
                 </div>
 
-                <div className="flex gap-2">
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    placeholder="Update current amount"
-                    className="flex-1 px-4 py-2.5 border border-gray-300 rounded-xl text-sm bg-white text-gray-900 placeholder-gray-400 hover:border-gray-400 focus:border-purple-600 focus:ring-2 focus:ring-purple-600/10 outline-none transition-all"
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        handleUpdateProgress(goal.id, e.target.value);
-                        e.target.value = '';
-                      }
-                    }}
-                  />
-                  <button
-                    onClick={(e) => {
-                      const input = e.target.parentElement.querySelector('input');
-                      if (input.value) {
-                        handleUpdateProgress(goal.id, input.value);
-                        input.value = '';
-                      }
-                    }}
-                    className="px-5 py-2.5 bg-purple-600 text-white rounded-xl text-sm font-semibold hover:bg-purple-700 shadow-md shadow-purple-600/20 transition-all"
-                  >
-                    Update
-                  </button>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-gray-600">Progress</span>
+                    <span className="font-semibold text-gray-900">{Math.round(calculateProgress(goal))}%</span>
+                  </div>
+
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-gray-600">Target</span>
+                    <span className="font-semibold text-gray-900">{formatCurrency(goal.targetAmount)}</span>
+                  </div>
+
+                  <div className="pt-2 border-t border-gray-100">
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className="bg-emerald-500 h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${calculateProgress(goal)}%` }}
+                      ></div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            );
-          })}
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Active Goal Display */}
+      {currentGoal && (
+        <div className="mb-6 sm:mb-8">
+          <div className="bg-white rounded-2xl p-5 sm:p-7 shadow-[0_1px_3px_rgba(0,0,0,0.08)] border border-gray-200/80">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900 tracking-tight mb-1">{currentGoal.name}</h2>
+                <div className="flex items-center gap-2">
+                  <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">Active Goal</span>
+                  <span className="text-sm text-gray-500">
+                    Due {format(parseISO(currentGoal.deadline), 'MMM d, yyyy')}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Progress Section */}
+            <div className="mb-6">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm font-semibold text-gray-700">Progress</span>
+                <span className="text-sm font-bold text-gray-900">{Math.round(calculateProgress(currentGoal))}%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-3">
+                <div
+                  className="bg-emerald-500 h-3 rounded-full transition-all duration-500 ease-out"
+                  style={{ width: `${calculateProgress(currentGoal)}%` }}
+                ></div>
+              </div>
+            </div>
+
+            {/* Amount Details */}
+            <div className="grid grid-cols-3 gap-4">
+              <div className="text-center">
+                <p className="text-xs text-gray-500 font-medium mb-1">Current</p>
+                <p className="text-lg font-bold text-emerald-600">{formatCurrency(currentGoal.currentAmount)}</p>
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-gray-500 font-medium mb-1">Target</p>
+                <p className="text-lg font-bold text-gray-900">{formatCurrency(currentGoal.targetAmount)}</p>
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-gray-500 font-medium mb-1">Remaining</p>
+                <p className="text-lg font-bold text-red-500">
+                  {formatCurrency(currentGoal.targetAmount - currentGoal.currentAmount)}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* All Goals Grid */}
+      {goals.length > 0 ? (
+        <div>
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4 tracking-tight">All Goals</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            {goals.map((goal) => {
+              const progress = calculateProgress(goal);
+
+              return (
+                <div
+                  key={goal.id}
+                  onClick={() => handleSelectGoal(goal)}
+                  className="cursor-pointer rounded-2xl p-7 shadow-sm border bg-white hover:shadow-md transition-all duration-200"
+                >
+                  <div className="flex justify-between items-start mb-5">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-lg font-bold text-gray-900 tracking-tight">{goal.name}</h3>
+                      {currentGoal?.id === goal.id && (
+                        <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-xs font-semibold">
+                          Active
+                        </span>
+                      )}
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteGoal(goal.id);
+                      }}
+                      className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition-all"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  <div className="mb-5">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm font-semibold text-gray-600">Progress</span>
+                      <span className="text-sm font-bold text-gray-900">{progress.toFixed(1)}%</span>
+                    </div>
+                    <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden mb-3">
+                      <div
+                        className="bg-gradient-to-r from-purple-500 to-purple-600 h-full rounded-full transition-all duration-500"
+                        style={{ width: `${progress}%` }}
+                      ></div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      placeholder="Update current amount"
+                      className="flex-1 px-4 py-2.5 border border-gray-300 rounded-xl text-sm bg-white text-gray-900 placeholder-gray-400 hover:border-gray-400 focus:border-purple-600 focus:ring-2 focus:ring-purple-600/10 outline-none transition-all"
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          handleUpdateProgress(goal.id, e.target.value);
+                          e.target.value = '';
+                        }
+                      }}
+                    />
+                    <button
+                      onClick={(e) => {
+                        const input = e.target.parentElement.querySelector('input');
+                        if (input.value) {
+                          handleUpdateProgress(goal.id, input.value);
+                          input.value = '';
+                        }
+                      }}
+                      className="px-5 py-2.5 bg-purple-600 text-white rounded-xl text-sm font-semibold hover:bg-purple-700 shadow-md shadow-purple-600/20 transition-all"
+                    >
+                      Update
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center py-20 text-center">
