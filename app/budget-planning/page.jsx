@@ -350,7 +350,7 @@ export default function BudgetPlanning() {
                         Created {format(new Date(budget.createdAt || budget.month), 'MMM d, yyyy')}
                       </p>
 
-                      {/* Budget Progress Summary */}
+                      {/* Budget Usage Summary */}
                       <div className="space-y-1">
                         <div className="flex justify-between items-center text-xs">
                           <span className="text-gray-600">Spent:</span>
@@ -359,14 +359,14 @@ export default function BudgetPlanning() {
                           </span>
                         </div>
                         <div className="flex justify-between items-center text-xs">
-                          <span className="text-gray-600">Progress:</span>
+                          <span className="text-gray-600">Usage:</span>
                           <span className={`font-semibold ${progress.overallProgress > 80 ? 'text-yellow-600' : 'text-gray-900'}`}>
                             {progress.overallProgress.toFixed(1)}%
                           </span>
                         </div>
                       </div>
 
-                      {/* Progress Bar */}
+                      {/* Usage Bar */}
                       <div className="mt-2">
                         <div className="w-full bg-gray-200 rounded-full h-1.5">
                           <div
@@ -715,10 +715,10 @@ export default function BudgetPlanning() {
                 <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">Active</span>
               </div>
 
-              {/* Overall Progress Bar */}
+              {/* Overall Usage Bar */}
               <div className="mb-4">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm font-semibold text-gray-700">Overall Progress</span>
+                  <span className="text-sm font-semibold text-gray-700">Overall Usage</span>
                   <span className="text-sm font-bold text-gray-900">{progress.overallProgress.toFixed(1)}%</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-3">
@@ -776,7 +776,7 @@ export default function BudgetPlanning() {
                           </span>
                         </div>
 
-                        {/* Category Progress Bar */}
+                        {/* Category Usage Bar */}
                         <div className="mt-3">
                           <div className="w-full bg-gray-200 rounded-full h-2">
                             <div
